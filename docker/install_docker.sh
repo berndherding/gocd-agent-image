@@ -1,4 +1,4 @@
-#curl -fsSL https://test.docker.com/ | sed -e 's/\(apt-get install.*docker-engine\)/RUNLEVEL=1 \1/' | /bin/bash
+# curl -fsSL https://test.docker.com/ | sed -e 's/\(apt-get install.*docker-engine\)/RUNLEVEL=1 \1/' | /bin/bash
 
 cat <<EOF > /etc/apt/sources.list.d/docker.list
 deb https://apt.dockerproject.org/repo ubuntu-trusty main
@@ -10,6 +10,6 @@ apt-key adv \
 
 apt-get update
 
-apt-cache showpkg docker-engine
+# apt-cache showpkg docker-engine
 
 apt-get install -y docker-engine=1.11.2-0~trusty
