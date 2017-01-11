@@ -22,6 +22,9 @@ RUN  /bin/bash install_docker.sh
 RUN  /bin/bash install_shunit.sh
 RUN  /bin/bash install_shellcheck.sh
 
+COPY make_port_configurable.sh .
+RUN  /bin/bash make_port_configurable.sh
+
 RUN  mkdir /gocd
 RUN  chown go.go /gocd
 
