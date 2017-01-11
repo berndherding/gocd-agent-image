@@ -60,8 +60,7 @@ function build() {
 
   # why run at all? -> the gocd agent extracts itself on first run
   containerId=$(docker run --name "$containerName" -d \
-    -e GO_SERVER="$goServerUrl" \
-    -e GO_SERVER_PORT=80 \
+    -e GO_SERVER_URL="$goServerUrl:80" \
     "$imageName"
   ) || return $ERROR_build_dockerRun
 
@@ -80,8 +79,7 @@ function build() {
   docker rm -f "$containerName" || return $ERROR_build_dockerRemove_container
 
   containerId=$(docker run --name "$containerName" -d \
-    -e GO_SERVER="$goServerUrl" \
-    -e GO_SERVER_PORT=80 \
+    -e GO_SERVER_URL="$goServerUrl:80" \
     "$imageName" \
     sleep 300
   ) || return $ERROR_build_dockerRun
