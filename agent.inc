@@ -61,7 +61,7 @@ function build() {
   # why run at all? -> the gocd agent extracts itself on first run
   containerId=$(docker run --name "$containerName" -d \
     -e GO_SERVER="$goServerUrl" \
-    -e RUN_MODE=init \
+    -e GO_SERVER_PORT=80 \
     "$imageName"
   ) || return $ERROR_build_dockerRun
 
@@ -81,7 +81,7 @@ function build() {
 
   containerId=$(docker run --name "$containerName" -d \
     -e GO_SERVER="$goServerUrl" \
-    -e RUN_MODE=init \
+    -e GO_SERVER_PORT=80 \
     "$imageName" \
     sleep 300
   ) || return $ERROR_build_dockerRun
@@ -120,8 +120,6 @@ function run() {
   containerName=${imageName//:/-}
 
   containerId=$(docker run --name "$containerName" -d \
-    -e GITHUB_PEM_KEY="$GITHUB_PEM_KEY" \
-    -e RUN_MODE=live \
     "$(getDockerHubUsername)/$imageName"
   ) || return $ERROR_run_dockerRun
 
