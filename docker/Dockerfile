@@ -37,5 +37,6 @@ RUN  chmod 0700  /gocd/bh_init
 RUN  mkdir /gocd-plugins
 ADD  https://github.com/ind9/gocd-s3-artifacts/releases/download/v2.0.2/s3fetch-assembly-2.0.2.jar   /gocd-plugins
 ADD  https://github.com/ind9/gocd-s3-artifacts/releases/download/v2.0.2/s3publish-assembly-2.0.2.jar /gocd-plugins
+ADD  https://github.com/gocd-contrib/docker-swarm-elastic-agents/releases/download/v1.1.2/docker-swarm-elastic-agents-1.1.2.jar /gocd-plugins
 
 CMD /gocd/bh_init
