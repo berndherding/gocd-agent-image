@@ -14,7 +14,7 @@ shopt -s extglob
 ERROR_build_dockerBuild=1
 ERROR_build_dockerRun=2
 ERROR_build_dockerCommit=3
-ERROR_build_dockerExec_movePlugins=4
+ERROR_build_dockerExec_chownPlugins=4
 ERROR_build_dockerExec_removeGuid=5
 ERROR_build_dockerRemove_container=6
 ERROR_destroy_dockerRemove_container=7
@@ -66,15 +66,22 @@ function build() {
 
   containerId=${containerId:0:12}
 
-  docker exec -t "$containerName" /bin/bash /usr/bin/wait_for_go_agent.sh 120 \
-  # || return $ERROR_build_dockerExec_waitForGoAgent
+  docker exec -t "$containerName" /bin/bash /usr/bin/wait_for_go_agent.sh 180 \
+  || return $ERROR_build_dockerExec_waitForGoAgent
 
   docker exec -t "$containerName" /bin/bash -c "
-    mv /gocd-plugins/* /var/lib/go-agent/plugins/external
-    chown go.go /var/lib/go-agent/plugins/external/*
-  " || return $ERROR_build_dockerExec_movePlugins 
+    chown go.go /gocd-plugins/*
+  " || return $ERROR_build_dockerExec_chownPlugins 
 
   docker commit "$containerId" "$imageName" || return $ERROR_build_dockerCommit
+
+# NOTE: it looks like after first start the container is writing guid.txt.
+# whenever this file is deleted, the container creates it anew. somehow the
+# only solution to delete guid.txt is to commit first, run anew and then
+# delete the guid.txt as seen below. the image will then be committed w/o
+# a guid.txt and a new one will then be created during the first startup
+# after that. this way, guid.txt will be unique which is a condition for 
+# an agent to auto-register with the server.
 
   docker rm -f "$containerName" || return $ERROR_build_dockerRemove_container
 
