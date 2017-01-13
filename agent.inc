@@ -16,11 +16,12 @@ ERROR_build_dockerRun=2
 ERROR_build_dockerCommit=3
 ERROR_build_dockerExec_chownPlugins=4
 ERROR_build_dockerExec_removeGuid=5
-ERROR_build_dockerRemove_container=6
-ERROR_destroy_dockerRemove_container=7
-ERROR_run_dockerExec_waitForGoAgent=8
-ERROR_run_dockerRun=9
-ERROR_ship_dockerPush=10
+ERROR_build_dockerExec_waitForGoAgent=6
+ERROR_build_dockerRemove_container=7
+ERROR_destroy_dockerRemove_container=8
+ERROR_run_dockerExec_waitForGoAgent=9
+ERROR_run_dockerRun=10
+ERROR_ship_dockerPush=11
 
 
 
