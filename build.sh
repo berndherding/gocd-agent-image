@@ -4,4 +4,4 @@
 . "$(dirname "${BASH_SOURCE[0]}")/agent.inc"
 
 # shellcheck disable=SC2119
-build "${1:-$(getImageTag)}"
+build "${1:-$(getImageTag)}" "{2:-use-build-server}"
