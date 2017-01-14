@@ -11,7 +11,7 @@ SHUNIT=$(which shunit)
 
 
 function testBuild() {
-  build "$IMAGETAG"
+  build "$IMAGETAG" "use-build-server"
   assertEquals "build failed" 0 $?
 }
 
@@ -25,7 +25,7 @@ function testShip() {
 
 
 function testRun() {
-  run "$IMAGETAG"
+  run "$IMAGETAG" "use-build-server"
   assertEquals "run failed" 0 $?
 }
 

@@ -124,14 +124,21 @@ function ship() {
 
 function run() {
   local imageName=$1
+  local useBuildServer=$2
 
   containerName=${imageName//:/-}
+  imageName="$(getDockerHubUsername)/$imageName"
+
+  if [ "use-build-server" = "$useBuildServer" ] ; then
+    goServerUrl="$GO_SERVER"
+  else
+    goServerUrl="$(cat "$(dirname "${BASH_SOURCE[0]}")"/target/goServerPublicIpAddress)"
+  fi
 
   containerId=$(docker run --name "$containerName" -d \
-    "$(getDockerHubUsername)/$imageName"
+    -e GO_SERVER="$goServerUrl" \
+    "$imageName"
   ) || return $ERROR_run_dockerRun
-
-  containerId=${containerId:0:12}
 
   docker exec -t "$containerName" /bin/bash /usr/bin/wait_for_go_agent.sh 120 \
   || return $ERROR_run_dockerExec_waitForGoAgent
