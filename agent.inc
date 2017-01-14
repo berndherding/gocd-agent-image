@@ -14,7 +14,7 @@ shopt -s extglob
 ERROR_build_dockerBuild=1
 ERROR_build_dockerRun=2
 ERROR_build_dockerCommit=3
-ERROR_build_dockerExec_chownPlugins=4
+#ERROR_build_dockerExec_chownPlugins=4
 ERROR_build_dockerExec_removeGuid=5
 ERROR_build_dockerExec_waitForGoAgent=6
 ERROR_build_dockerRemove_container=7
@@ -51,10 +51,16 @@ function getImageTag() {
 
 function build() {
   local imageName=$1
+  local useBuildServer=$2
 
   containerName=${imageName//:/-}
   imageName="$(getDockerHubUsername)/$imageName"
-  goServerUrl="$(cat "$(dirname "${BASH_SOURCE[0]}")"/target/goServerPublicIpAddress)"
+
+  if [ "use-build-server" = "$useBuildServer" ] ; then
+    goServerUrl="$GO_SERVER"
+  else
+    goServerUrl="$(cat "$(dirname "${BASH_SOURCE[0]}")"/target/goServerPublicIpAddress)"
+  fi
 
   docker build --no-cache -t "$imageName" "$(dirname "${BASH_SOURCE[0]}")"/docker | tee /tmp/agent-build.out \
   || return $ERROR_build_dockerBuild
@@ -69,10 +75,6 @@ function build() {
 
   docker exec -t "$containerName" /bin/bash /usr/bin/wait_for_go_agent.sh 180 \
   || return $ERROR_build_dockerExec_waitForGoAgent
-
-  docker exec -t "$containerName" /bin/bash -c "
-    chown go.go /gocd-plugins/*
-  " || return $ERROR_build_dockerExec_chownPlugins 
 
   docker commit "$containerId" "$imageName" || return $ERROR_build_dockerCommit
 
