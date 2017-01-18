@@ -96,6 +96,7 @@ function build() {
 
   docker exec -t "$containerName" /bin/bash -c "
     rm /var/lib/go-agent/config/guid.txt
+    rm /var/lib/go-agent/config/agent.jks
   " || return $ERROR_build_dockerExec_removeGuid
 
   docker commit --change='CMD /gocd/bh_init' "$containerId" "$imageName" \
