@@ -6,7 +6,6 @@
 FROM gocd/gocd-agent:16.12.0
 
 COPY wait_for_go_agent.sh /usr/bin
-COPY make_port_configurable.sh .
 COPY known_hosts /etc/ssh/github_known_hosts
 COPY ssh_config  /etc/ssh
 COPY bh_init     /gocd/
@@ -27,7 +26,6 @@ RUN  /bin/bash install_awscli.sh && \
      /bin/bash install_shellcheck.sh
 
 RUN  chown -R go.go /gocd /plugins /etc/ssh/github_known_hosts && \
-     /bin/bash make_port_configurable.sh && \
      chmod 0700 /gocd/bh_init
 
 CMD /gocd/bh_init
