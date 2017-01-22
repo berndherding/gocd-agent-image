@@ -2,26 +2,20 @@
 
 shopt -s extglob
 
-[ ! -e "$(dirname "${BASH_SOURCE[0]}")/inc"    ] && ln -s ../gocd-base-ami/inc    "$(dirname "${BASH_SOURCE[0]}")/inc"
-[ ! -e "$(dirname "${BASH_SOURCE[0]}")/target" ] && ln -s ../gocd-base-ami/target "$(dirname "${BASH_SOURCE[0]}")/target"
-
-# shellcheck source=/dev/null
-. "$(dirname "${BASH_SOURCE[0]}")/inc/commons.inc"
-
-# shellcheck source=/dev/null
-. "$(dirname "${BASH_SOURCE[0]}")/inc/keys.inc"
+[ ! -d "$(dirname "${BASH_SOURCE[0]}")/target" ] && mkdir "$(dirname "${BASH_SOURCE[0]}")/target"
 
 ERROR_build_dockerBuild=1
 ERROR_build_dockerRun=2
 ERROR_build_dockerCommit=3
-#ERROR_build_dockerExec_chownPlugins=4
-ERROR_build_dockerExec_removeGuid=5
-ERROR_build_dockerExec_waitForGoAgent=6
-ERROR_build_dockerRemove_container=7
-ERROR_destroy_dockerRemove_container=8
-ERROR_run_dockerExec_waitForGoAgent=9
-ERROR_run_dockerRun=10
-ERROR_ship_dockerPush=11
+ERROR_build_dockerExec_removeGuid=4
+ERROR_build_dockerExec_waitForGoAgent=5
+ERROR_build_dockerRemove_container=6
+ERROR_destroy_dockerRemove_container=7
+ERROR_run_dockerExec_waitForGoAgent=8
+ERROR_run_dockerRun=9
+ERROR_ship_dockerPush=10
+ERROR_noDockerHubUsername=11
+ERROR_noDockerHubPassword=12
 
 
 
@@ -53,8 +47,10 @@ function build() {
   local imageName=$1
   local useBuildServer=$2
 
+  [ -z "$DOCKER_HUB_USERNAME" ] && return $ERROR_noDockerHubUsername
+
   containerName=${imageName//:/-}
-  imageName="$(getDockerHubUsername)/$imageName"
+  imageName="$DOCKER_HUB_USERNAME/$imageName"
 
   if [ "use-build-server" = "$useBuildServer" ] ; then
     goServerUrl="$GO_SERVER"
@@ -112,11 +108,14 @@ function build() {
 function ship() {
   local imageName=$1
 
-  docker login --username "$(getDockerHubUsername)" --password "$(getDockerHubPassword)"
+  [ -z "$DOCKER_HUB_USERNAME" ] && return $ERROR_noDockerHubUsername
+  [ -z "$DOCKER_HUB_PASSWORD" ] && return $ERROR_noDockerHubPassword
 
-  docker push "$(getDockerHubUsername)/$imageName" || return $ERROR_ship_dockerPush
+  docker login --username "$DOCKER_HUB_USERNAME" --password "$DOCKER_HUB_PASSWORD"
 
-  echo "$(getDockerHubUsername)/$imageName" > "$(dirname "${BASH_SOURCE[0]}")"/target/gocdAgentImageName
+  docker push "$DOCKER_HUB_USERNAME/$imageName" || return $ERROR_ship_dockerPush
+
+  echo "$DOCKER_HUB_USERNAME/$imageName" > "$(dirname "${BASH_SOURCE[0]}")"/target/gocdAgentImageName
 
   docker logout
 }
@@ -127,8 +126,10 @@ function run() {
   local imageName=$1
   local useBuildServer=$2
 
+  [ -z "$DOCKER_HUB_USERNAME" ] && return $ERROR_noDockerHubUsername
+
   containerName=${imageName//:/-}
-  imageName="$(getDockerHubUsername)/$imageName"
+  imageName="$DOCKER_HUB_USERNAME/$imageName"
 
   if [ "use-build-server" = "$useBuildServer" ] ; then
     goServerUrl="$GO_SERVER"
