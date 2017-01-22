@@ -8,7 +8,8 @@ FROM gocd/gocd-agent:16.12.0
 COPY wait_for_go_agent.sh /usr/bin
 COPY known_hosts /etc/ssh/github_known_hosts
 COPY ssh_config  /etc/ssh
-COPY bh_init     /gocd/
+COPY bh_init     /gocd/bh_init
+COPY release     /gocd/release
 
 COPY install_awscli.sh .
 COPY install_docker.sh .

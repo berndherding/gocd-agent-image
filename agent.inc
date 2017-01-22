@@ -19,9 +19,11 @@ ERROR_noDockerHubPassword=12
 
 
 
-#
-# TODO: check for docker, e.g. by calling docker version
-#
+function getRelease() {
+  gpc="${GO_PIPELINE_COUNTER:-0}"
+  rev=${GO_REVISION:-$(git rev-parse HEAD)}
+  echo "$gpc-${rev:0:7}"
+}
 
 
 
@@ -57,6 +59,8 @@ function build() {
   else
     goServerUrl="$(cat "$(dirname "${BASH_SOURCE[0]}")"/target/goServerPublicIpAddress)"
   fi
+
+  echo "IMAGE_RELEASE=$(getRelease)" > docker/release
 
   docker build --no-cache -t "$imageName" "$(dirname "${BASH_SOURCE[0]}")"/docker | tee /tmp/agent-build.out \
   || return $ERROR_build_dockerBuild
