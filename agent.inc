@@ -57,7 +57,7 @@ function build() {
   if [ "use-build-server" = "$useBuildServer" ] ; then
     goServerUrl="$GO_SERVER"
   else
-    goServerUrl="$(cat "$(dirname "${BASH_SOURCE[0]}")"/target/goServerPublicIpAddress)"
+    goServerUrl="$(cat "$(dirname "${BASH_SOURCE[0]}")"/target/publicIp)"
   fi
 
   echo "IMAGE_RELEASE=$(getRelease)" > docker/release
@@ -138,7 +138,7 @@ function run() {
   if [ "use-build-server" = "$useBuildServer" ] ; then
     goServerUrl="$GO_SERVER"
   else
-    goServerUrl="$(cat "$(dirname "${BASH_SOURCE[0]}")"/target/goServerPublicIpAddress)"
+    goServerUrl="$(cat "$(dirname "${BASH_SOURCE[0]}")"/target/publicIp)"
   fi
 
   containerId=$(docker run --name "$containerName" -d \
