@@ -11,20 +11,14 @@ COPY ssh_config  /etc/ssh
 COPY bh_init     /gocd/bh_init
 COPY release     /gocd/release
 
-COPY install_awscli.sh .
-COPY install_docker.sh .
-COPY install_shunit.sh .
-COPY install_shellcheck.sh .
+COPY install_packages.sh .
 
 # plugins
 
 ADD  https://github.com/ind9/gocd-s3-artifacts/releases/download/v2.0.2/s3fetch-assembly-2.0.2.jar   /plugins
 ADD  https://github.com/ind9/gocd-s3-artifacts/releases/download/v2.0.2/s3publish-assembly-2.0.2.jar /plugins
 
-RUN  /bin/bash install_awscli.sh && \
-     /bin/bash install_docker.sh && \
-     /bin/bash install_shunit.sh && \
-     /bin/bash install_shellcheck.sh
+RUN  /bin/bash install_packages.sh
 
 RUN  chown -R go.go /gocd /plugins /etc/ssh/github_known_hosts && \
      chmod 0700 /gocd/bh_init
