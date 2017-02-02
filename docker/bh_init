@@ -23,4 +23,7 @@ echo "vmdocker:x:497:go" >> /etc/group
 # force generation of new keystores
 rm /var/lib/go-agent/config/agent.jks 2> /dev/null
 
+# set elasticAgent.agentId dynamically
+sed -i -e 's/\(.*\).elasticAgent.agentId=.*/\1.elasticAgent.agentId='"$(hostname)"'/' /var/lib/go-agent/config/autoregister.properties
+
 /sbin/my_init
