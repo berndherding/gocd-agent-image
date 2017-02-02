@@ -38,10 +38,6 @@ chmod 755 /usr/bin/shellcheck
 
 
 
-#   htpasswd
-apt-get install -y apache2-utils
-
-
-
 #   jq
+
 apt-get install -y jq
